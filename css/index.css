@@ -10,3 +10,7 @@ td {
   border: 1px solid black;
   text-align: center;
 }
+
+#game-message {
+  text-align: center;
+}
