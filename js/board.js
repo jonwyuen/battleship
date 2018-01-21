@@ -16,10 +16,17 @@ Example Board
 ]
 
 */
+let idCount = 1;
 
 class Board {
   constructor(size) {
     this.board = [];
+    this.ships = [];
+    this.shipBounds = { x: {}, y: {} };
+    this.createBoard(size);
+    this.generateShips()
+    this.generateShipLocations(size);
+    console.log(this.board, this.shipBounds)
   }
 
   createBoard(size) {
@@ -32,7 +39,8 @@ class Board {
 
   createDomBoard(size) {
     let board = document.createElement('table');
-    board.setAttribute('class', 'board');
+    let boardId = `board${idCount++}`;
+    board.setAttribute('id', `${boardId}`);
     for (let i = 0; i < size; i++) {
       let row = document.createElement('tr');
       board.appendChild(row);
@@ -44,17 +52,18 @@ class Board {
       }
     }
     document.querySelector('#game').appendChild(board);
+    this.addFireEventHandler(boardId);
   }
 
   generateShips() {
-    this.ships = [];
     for (let i = 2; i < 6; i++) {
-      this.ships.push(new Ship(i));
+      let ship = new Ship(i)
+      this.ships.push(ship);
     }
   }
 
   generateCoordinate(size) {
-    return Math.floor(Math.random() * size + 1);
+    return Math.floor(Math.random() * size);
   }
 
   // generateLocation(size) {
@@ -63,14 +72,32 @@ class Board {
   //   return this.board[randomX][randomY];
   // }
 
-  checkBounds() {
-    
+  checkBounds(xCoord, yCoord, direction, shipSize, boardSize) {
+    if (direction === 'right') {
+      if (yCoord + shipSize - 1 >= boardSize) return false;
+      if (!this.shipBounds.x[xCoord]) return true;
+      for (let i = 0; i < shipSize; i++) {
+        if (this.shipBounds.x[xCoord].includes(yCoord++)) {
+          return false;
+        }
+      }
+    } else if (direction === 'down') {
+      if (xCoord + shipSize - 1 >= boardSize) return false;
+      if (!this.shipBounds.y[yCoord]) return true;
+      for (let i = 0; i < shipSize; i++) {
+        if (this.shipBounds.y[yCoord].includes(xCoord++)) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   generateShipLocations(size) {
     // random x,y in bounds and direction (right or down)
-    this.bounds = {};
     /*
+        this.shipBounds = {};
+
       {
         x: [all the y's]
       }
@@ -83,39 +110,44 @@ class Board {
 
       let xCoord = this.generateCoordinate(size);
       let yCoord = this.generateCoordinate(size);
-      let location = this.board[xCoord][yCoord];
 
-      while (location) {
-        // generate random location until find one thats null
+      let check = this.checkBounds(xCoord, yCoord, direction, ship.size, size);
+
+      while (!check) {
+        direction = Math.random() < 0.5 ? 'right' : 'down';
         xCoord = this.generateCoordinate(size);
         yCoord = this.generateCoordinate(size);
-        location = this.board[xCoord][yCoord];
+        check = this.checkBounds(xCoord, yCoord, direction, ship.size, size);
       }
-      // check if it intersects with another ship
-      // make sure all ship locations are null
-
-      this.board[xCoord][yCoord] = ship.id;
 
       for (let i = 0; i < ship.size; i++) {
         if (direction === 'right') {
-          
-          this.board[xCoord][++yCoord] = ship.id;
-        } else {
-          this.board[++xCoord][yCoord] = ship.id;
+          if (!this.shipBounds.x[xCoord]) this.shipBounds.x[xCoord] = [];
+          if (!this.shipBounds.y[yCoord]) this.shipBounds.y[yCoord] = [];
+          this.shipBounds.x[xCoord].push(yCoord);
+          this.shipBounds.y[yCoord].push(xCoord);
+          console.log(xCoord, yCoord);
+          this.board[xCoord][yCoord++] = ship.id;
+        } else if (direction === 'down') {
+          if (!this.shipBounds.y[yCoord]) this.shipBounds.y[yCoord] = [];
+          if (!this.shipBounds.x[xCoord]) this.shipBounds.x[xCoord] = [];
+          this.shipBounds.y[yCoord].push(xCoord);
+          this.shipBounds.x[xCoord].push(yCoord);
+          console.log(xCoord, yCoord)
+          this.board[xCoord++][yCoord] = ship.id;
         }
       }
     });
   }
 
-  handleFireEvent() {
-    let board = document.querySelectorAll('.board');
-    board.forEach(board => {
-      board.addEventListener('click', e => {
-        if (e.target.matches('td')) {
-          this.fire(+e.target.dataset.x, +e.target.dataset.y);
-          e.stopPropagation();
-        }
-      });
+  addFireEventHandler(boardId) {
+    let board = document.querySelector(`#${boardId}`);
+    board.addEventListener('click', e => {
+      if (e.target.matches('td')) {
+        console.log(+e.target.dataset.x, +e.target.dataset.y);
+        this.fire(+e.target.dataset.x, +e.target.dataset.y);
+        e.stopPropagation();
+      }
     });
   }
 
@@ -151,7 +183,7 @@ class Board {
       if (!flag) break;
       let row = this.board[i];
       for (let j = 0; j < row.length; i++) {
-        if (row[j] !== null || row[j] !== 'taken' ) {
+        if (row[j] !== null || row[j] !== 'taken') {
           flag = false;
           break;
         }

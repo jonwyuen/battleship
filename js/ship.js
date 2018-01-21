@@ -2,7 +2,7 @@ const CARRIER = 'carrier';
 const BATTLESHIP = 'battleship';
 const CRUISER = 'cruiser';
 const DESTROYER = 'destroyer';
-const count = 0;
+let count = 0;
 
 class Ship {
   constructor(size) {
@@ -15,12 +15,16 @@ class Ship {
     switch (size) {
       case 5:
         this.id = `${CARRIER}${count++}`;
+        break;
       case 4:
         this.id = `${BATTLESHIP}${count++}`;
+        break;
       case 3:
         this.id = `${CRUISER}${count++}`;
+        break;
       case 2:
         this.id = `${DESTROYER}${count++}`;
+        break;
     }
   }
 }
