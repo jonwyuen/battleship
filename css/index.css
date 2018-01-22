@@ -11,6 +11,11 @@ td {
   text-align: center;
 }
 
-#game-message {
+#game {
+  display: flex;
+}
+
+.message {
   text-align: center;
+  margin: 10px;
 }

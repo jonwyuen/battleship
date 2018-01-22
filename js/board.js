@@ -21,8 +21,10 @@ let idCount = 1;
 class Board {
   constructor(size) {
     this.board = [];
+    this.id = `board${idCount++}`;
     this.ships = [];
     this.shipBounds = { x: {}, y: {} };
+    this.shipsSunk = 0;
     this.createBoard(size);
     this.generateShips()
     this.generateShipLocations(size);
@@ -39,8 +41,8 @@ class Board {
 
   createDomBoard(size) {
     let board = document.createElement('table');
-    let boardId = `board${idCount++}`;
-    board.setAttribute('id', `${boardId}`);
+    board.setAttribute('id', this.id);
+    // board.setAttribute('class', 'board');
     for (let i = 0; i < size; i++) {
       let row = document.createElement('tr');
       board.appendChild(row);
@@ -52,7 +54,7 @@ class Board {
       }
     }
     document.querySelector('#game').appendChild(board);
-    this.addFireEventHandler(boardId);
+    // this.addFireEventHandler(boardId);
   }
 
   generateShips() {
@@ -140,60 +142,65 @@ class Board {
     });
   }
 
-  addFireEventHandler(boardId) {
-    let board = document.querySelector(`#${boardId}`);
-    board.addEventListener('click', e => {
-      if (e.target.matches('td')) {
-        console.log(+e.target.dataset.x, +e.target.dataset.y);
-        this.fire(+e.target.dataset.x, +e.target.dataset.y);
-        e.stopPropagation();
-      }
-    });
-  }
+  // addFireEventHandler(boardId) {
+  //   let board = document.querySelector(`#${boardId}`);
+  //   board.addEventListener('click', e => {
+  //     if (e.target.matches('td')) {
+  //       console.log(+e.target.dataset.x, +e.target.dataset.y);
+  //       this.fire(+e.target.dataset.x, +e.target.dataset.y, e.target);
+  //       e.stopPropagation();
+  //     }
+  //   });
+  // }
 
-  fire(x, y) {
-    let checkForWin = this.checkForWin();
-    if (checkForWin) return;
-    // check if there is a ship at location
-    if (this.board[x][y] === 'taken') {
-      this.displayMessage('Already taken');
-      return;
-    } else if (this.board[x][y]) {
-      let current = this.board[x][y];
-      this.board[x][y] = 'taken';
-      // check if any of that ship is remaining
-      for (let i = 0; i < this.board.length; i++) {
-        let row = this.board[i];
-        for (let j = 0; j < row.length; i++) {
-          if (current === row[j]) {
-            this.displayMessage('Hit');
-            return;
-          }
-        }
-        this.displayMessage(`Sink ${current}`);
-      }
-    } else {
-      this.displayMessage('Miss');
-    }
-  }
+  // fire(x, y, cell) {
+  //   // let checkForWin = this.checkForWin();
+  //   // if (checkForWin) return;
+  //   // check if there is a ship at location
+  //   if (this.board[x][y] === 'taken') {
+  //     this.displayMessage('Already taken');
+  //     console.log(this.board)
+  //     return;
+  //   } else if (this.board[x][y]) {
+  //     let current = this.board[x][y];
+  //     this.board[x][y] = 'taken';
+  //     cell.style.backgroundColor = 'green';
+  //     // check if any of that ship is remaining
+  //     for (let i = 0; i < this.board.length; i++) {
+  //       let row = this.board[i];
+  //       for (let j = 0; j < row.length; j++) {
+  //         if (current === row[j]) {
+  //           this.displayMessage('Hit');
+  //           return;
+  //         }
+  //       }
+  //       this.displayMessage(`Sink ${current}`);
+  //       this.shipsSunk++;
+  //     }
+  //   } else {
+  //     cell.style.backgroundColor = 'red'
+  //     this.displayMessage('Miss');
+  //   }
+  // }
 
-  checkForWin() {
-    let flag = true;
-    for (let i = 0; i < this.board.length; i++) {
-      if (!flag) break;
-      let row = this.board[i];
-      for (let j = 0; j < row.length; i++) {
-        if (row[j] !== null || row[j] !== 'taken') {
-          flag = false;
-          break;
-        }
-      }
-    }
-    if (flag) this.displayMessage('Win');
-    return flag;
-  }
+  // checkForWin() {
+  //   let flag = true;
+  //   for (let i = 0; i < this.board.length; i++) {
+  //     if (!flag) break;
+  //     let row = this.board[i];
+  //     for (let j = 0; j < row.length; j++) {
+  //       if (row[j] !== null && row[j] !== 'taken') {
+  //         flag = false;
+  //         break;
+  //       }
+  //     }
+  //   }
+  //   console.log(flag)
+  //   if (flag) this.displayMessage('Win');
+  //   return flag;
+  // }
 
-  displayMessage(message) {
-    document.querySelector('#game-message').innerHTML = message;
-  }
+  // displayMessage(message) {
+  //   document.querySelector('#game-message').innerHTML = message;
+  // }
 }
