@@ -17,18 +17,19 @@ Example Board
 
 */
 let idCount = 1;
+const shipTypes = ['Carrier', 'Battleship', 'Cruiser', 'Submarine', 'Destroyer'];
 
 class Board {
   constructor(size) {
     this.board = [];
     this.id = `board${idCount++}`;
     this.ships = [];
-    this.shipBounds = { x: {}, y: {} };
+    this.shipBounds = {};
     this.shipsSunk = 0;
     this.createBoard(size);
-    this.generateShips()
+    this.generateShips();
     this.generateShipLocations(size);
-    console.log(this.board, this.shipBounds)
+    console.log(this.board, this.shipBounds);
   }
 
   createBoard(size) {
@@ -48,9 +49,10 @@ class Board {
       board.appendChild(row);
       for (let j = 0; j < size; j++) {
         let cell = document.createElement('td');
+        cell.style.backgroundColor = 'lightblue';
         cell.setAttribute('data-x', i);
         cell.setAttribute('data-y', j);
-        cell.setAttribute('data-board', this.id)
+        cell.setAttribute('data-board', this.id);
         row.appendChild(cell);
       }
     }
@@ -59,36 +61,32 @@ class Board {
   }
 
   generateShips() {
-    for (let i = 2; i < 6; i++) {
-      let ship = new Ship(i)
-      this.ships.push(ship);
-    }
+    shipTypes.forEach(shipType => {
+      this.ships.push(new Ship(shipType));
+    });
   }
 
   generateCoordinate(size) {
     return Math.floor(Math.random() * size);
   }
 
-  // generateLocation(size) {
-  //   let randomX = this.generateCoordinate(size);
-  //   let randomY = this.generateCoordinate(size);
-  //   return this.board[randomX][randomY];
-  // }
-
   checkBounds(xCoord, yCoord, direction, shipSize, boardSize) {
     if (direction === 'right') {
       if (yCoord + shipSize - 1 >= boardSize) return false;
-      if (!this.shipBounds.x[xCoord]) return true;
+      if (!this.shipBounds[xCoord]) return true;
       for (let i = 0; i < shipSize; i++) {
-        if (this.shipBounds.x[xCoord].includes(yCoord++)) {
+        if (this.shipBounds[xCoord].includes(yCoord++)) {
           return false;
         }
       }
     } else if (direction === 'down') {
       if (xCoord + shipSize - 1 >= boardSize) return false;
-      if (!this.shipBounds.y[yCoord]) return true;
       for (let i = 0; i < shipSize; i++) {
-        if (this.shipBounds.y[yCoord].includes(xCoord++)) {
+        if (!this.shipBounds[xCoord]) { 
+          xCoord++;
+          continue;
+        }
+        if (this.shipBounds[xCoord++].includes(yCoord)) {
           return false;
         }
       }
@@ -96,7 +94,11 @@ class Board {
     return true;
   }
 
-  generateShipLocations(size) {
+  generateDirection() {
+    return Math.random() < 0.5 ? 'right' : 'down';
+  }
+
+  generateShipLocations(boardSize) {
     // random x,y in bounds and direction (right or down)
     /*
         this.shipBounds = {};
@@ -107,101 +109,26 @@ class Board {
     */
 
     this.ships.forEach(ship => {
-      let direction = Math.random() < 0.5 ? 'right' : 'down';
-      // ship.id; ship.size
-      // cannot go out of bounds
-
-      let xCoord = this.generateCoordinate(size);
-      let yCoord = this.generateCoordinate(size);
-
-      let check = this.checkBounds(xCoord, yCoord, direction, ship.size, size);
+      // // ship.id; ship.size
+      // // cannot go out of bounds
+      let check = null;
 
       while (!check) {
-        direction = Math.random() < 0.5 ? 'right' : 'down';
-        xCoord = this.generateCoordinate(size);
-        yCoord = this.generateCoordinate(size);
-        check = this.checkBounds(xCoord, yCoord, direction, ship.size, size);
+        var direction = this.generateDirection();
+        var xCoord = this.generateCoordinate(boardSize);
+        var yCoord = this.generateCoordinate(boardSize);
+        check = this.checkBounds(xCoord, yCoord, direction, ship.size, boardSize);
       }
 
       for (let i = 0; i < ship.size; i++) {
+        if (!this.shipBounds[xCoord]) this.shipBounds[xCoord] = [];
+        this.shipBounds[xCoord].push(yCoord);
         if (direction === 'right') {
-          if (!this.shipBounds.x[xCoord]) this.shipBounds.x[xCoord] = [];
-          if (!this.shipBounds.y[yCoord]) this.shipBounds.y[yCoord] = [];
-          this.shipBounds.x[xCoord].push(yCoord);
-          this.shipBounds.y[yCoord].push(xCoord);
-          console.log(xCoord, yCoord);
-          this.board[xCoord][yCoord++] = ship.id;
+          this.board[xCoord][yCoord++] = ship.type;
         } else if (direction === 'down') {
-          if (!this.shipBounds.y[yCoord]) this.shipBounds.y[yCoord] = [];
-          if (!this.shipBounds.x[xCoord]) this.shipBounds.x[xCoord] = [];
-          this.shipBounds.y[yCoord].push(xCoord);
-          this.shipBounds.x[xCoord].push(yCoord);
-          console.log(xCoord, yCoord)
-          this.board[xCoord++][yCoord] = ship.id;
+          this.board[xCoord++][yCoord] = ship.type;
         }
       }
     });
   }
-
-  // addFireEventHandler(boardId) {
-  //   let board = document.querySelector(`#${boardId}`);
-  //   board.addEventListener('click', e => {
-  //     if (e.target.matches('td')) {
-  //       console.log(+e.target.dataset.x, +e.target.dataset.y);
-  //       this.fire(+e.target.dataset.x, +e.target.dataset.y, e.target);
-  //       e.stopPropagation();
-  //     }
-  //   });
-  // }
-
-  // fire(x, y, cell) {
-  //   // let checkForWin = this.checkForWin();
-  //   // if (checkForWin) return;
-  //   // check if there is a ship at location
-  //   if (this.board[x][y] === 'taken') {
-  //     this.displayMessage('Already taken');
-  //     console.log(this.board)
-  //     return;
-  //   } else if (this.board[x][y]) {
-  //     let current = this.board[x][y];
-  //     this.board[x][y] = 'taken';
-  //     cell.style.backgroundColor = 'green';
-  //     // check if any of that ship is remaining
-  //     for (let i = 0; i < this.board.length; i++) {
-  //       let row = this.board[i];
-  //       for (let j = 0; j < row.length; j++) {
-  //         if (current === row[j]) {
-  //           this.displayMessage('Hit');
-  //           return;
-  //         }
-  //       }
-  //       this.displayMessage(`Sink ${current}`);
-  //       this.shipsSunk++;
-  //     }
-  //   } else {
-  //     cell.style.backgroundColor = 'red'
-  //     this.displayMessage('Miss');
-  //   }
-  // }
-
-  // checkForWin() {
-  //   let flag = true;
-  //   for (let i = 0; i < this.board.length; i++) {
-  //     if (!flag) break;
-  //     let row = this.board[i];
-  //     for (let j = 0; j < row.length; j++) {
-  //       if (row[j] !== null && row[j] !== 'taken') {
-  //         flag = false;
-  //         break;
-  //       }
-  //     }
-  //   }
-  //   console.log(flag)
-  //   if (flag) this.displayMessage('Win');
-  //   return flag;
-  // }
-
-  // displayMessage(message) {
-  //   document.querySelector('#game-message').innerHTML = message;
-  // }
 }
