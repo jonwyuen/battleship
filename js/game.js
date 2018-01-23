@@ -5,7 +5,7 @@ class Game {
 
   init() {
     this.boards = {};
-    this.turn = Math.random() < 0.5 ? 'Player1' : 'Player2';
+    this.turn = Math.random() < 0.5 ? 'Player 1' : 'Player 2';
     this.gameOver = false;
     this.initBoards();
     this.displayMessage(`${this.turn}'s Turn`, 'turn');
@@ -17,9 +17,8 @@ class Game {
     const board2 = new Board(6);
     this.addBoardToGame(board1);
     this.addBoardToGame(board2);
-    for (let boardId in this.boards) {
-      this.addFireEventHandler(boardId);
-    }
+    this.fireEvent = this.fireEvent.bind(this);
+    this.turn === 'Player 1' ? this.addFireEventHandler('board1') : this.addFireEventHandler('board2')
   }
 
   addBoardToGame(board) {
@@ -29,26 +28,45 @@ class Game {
   switchTurns() {
     if (this.gameOver) {
       this.displayMessage(`${this.turn} Wins`, 'turn');
+      for (let boardId in this.boards) {
+        this.removeFireEventHandler(boardId);
+      }
       // stop the game
     } else {
       // switch turns
-      if (this.turn === 'Player1') this.turn = 'Player2';
-      else if (this.turn === 'Player2') this.turn = 'Player1';
+      if (this.turn === 'Player 1') {
+        this.toggleFireEventHandler('board2', 'board1');
+        this.turn = 'Player 2'
+      }
+      else if (this.turn === 'Player 2') {
+        this.toggleFireEventHandler('board1', 'board2');
+        this.turn = 'Player 1';
+      }
       this.displayMessage(`${this.turn}'s Turn`, 'turn');
     }
   }
 
-  fireEventListener(boardId, e) {
+  fireEvent(e) {
     if (e.target.matches('td')) {
       console.log(+e.target.dataset.x, +e.target.dataset.y);
-      this.fire(+e.target.dataset.x, +e.target.dataset.y, e.target, boardId);
+      this.fire(+e.target.dataset.x, +e.target.dataset.y, e.target, e.target.dataset.board);
       e.stopPropagation();
     }
   }
 
+  toggleFireEventHandler(boardToAdd, boardToRemove) {
+    this.addFireEventHandler(boardToAdd);
+    this.removeFireEventHandler(boardToRemove);
+  }
+
   addFireEventHandler(boardId) {
     let board = document.querySelector(`#${boardId}`);
-    board.addEventListener('click', this.fireEventListener.bind(this, boardId));
+    board.addEventListener('click', this.fireEvent);
+  }
+
+  removeFireEventHandler(boardId) {
+    let board = document.querySelector(`#${boardId}`);
+    board.removeEventListener('click', this.fireEvent);
   }
 
   fire(x, y, cell, boardId) {
@@ -89,22 +107,6 @@ class Game {
     if (currentBoard.shipsSunk === currentBoard.ships.length) {
       this.gameOver = true;
     }
-    // return this.gameOver;
-    // let flag = true;
-    // for (let i = 0; i < currentBoard.length; i++) {
-    //   if (!flag) break;
-    //   let row = currentBoard[i];
-    //   for (let j = 0; j < row.length; j++) {
-    //     if (row[j] !== null && row[j] !== 'taken') {
-    //       flag = false;
-    //       break;
-    //     }
-    //   }
-    // }
-    // if (flag) {
-    //   this.gameOver = true;
-    // }
-    // return flag;
   }
 
   addResetHandler() {

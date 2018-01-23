@@ -50,6 +50,7 @@ class Board {
         let cell = document.createElement('td');
         cell.setAttribute('data-x', i);
         cell.setAttribute('data-y', j);
+        cell.setAttribute('data-board', this.id)
         row.appendChild(cell);
       }
     }
