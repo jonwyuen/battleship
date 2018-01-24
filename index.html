@@ -6,23 +6,62 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Battleship</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed" rel="stylesheet">
   <link rel="stylesheet" href="./css/index.css">
   <script src="./js/index.js"></script>
 
 </head>
 
 <body>
-
-  <div id="game">
-    
+  <div>  
+    <h1>Battleship</h1>
   </div>
-  <div id="game-message" class="message"></div>
-  <div id="turn-message" class="message"></div>
   <button id="reset">New Game</button>
+  <div class="messages hidden">
+    <div id="game-message"></div>
+    <div id="turn-message"></div>
+  </div>
+  <div id="player-labels"></div>
+  <div id="game"></div>
 
-<script src="./js/ship.js"></script>
-<script src="./js/board.js"></script>
-<script src="./js/game.js"></script>
+  <div id="legend">
+    <div>
+      <p>Carrier: </p>
+      <div class="legend-cell"></div>
+      <div class="legend-cell"></div>
+      <div class="legend-cell"></div>
+      <div class="legend-cell"></div>
+      <div class="legend-cell"></div>
+    </div>
+    <div>
+      <p>Battleship: </p>
+      <div class="legend-cell"></div>
+      <div class="legend-cell"></div>
+      <div class="legend-cell"></div>
+      <div class="legend-cell"></div>
+    </div>
+    <div>
+     <p>Cruiser: </p>
+      <div class="legend-cell"></div>
+      <div class="legend-cell"></div>
+      <div class="legend-cell"></div>
+    </div>
+    <div>
+      <p>Submarine: </p>
+      <div class="legend-cell"></div>
+      <div class="legend-cell"></div>
+      <div class="legend-cell"></div>
+    </div>
+    <div>
+      <p>Destroyer: </p>
+      <div class="legend-cell"></div>
+      <div class="legend-cell"></div>
+    </div>
+  </div>
+
+  <script src="./js/ship.js"></script>
+  <script src="./js/board.js"></script>
+  <script src="./js/game.js"></script>
 </body>
 
 </html>

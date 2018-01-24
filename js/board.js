@@ -16,20 +16,24 @@ Example Board
 ]
 
 */
-let idCount = 1;
-const shipTypes = ['Carrier', 'Battleship', 'Cruiser', 'Submarine', 'Destroyer'];
+const shipTypes = [
+  'Carrier',
+  'Battleship',
+  'Cruiser',
+  'Submarine',
+  'Destroyer'
+];
 
 class Board {
-  constructor(size) {
+  constructor(size, id) {
     this.board = [];
-    this.id = `board${idCount++}`;
+    this.id = `board${id}`;
     this.ships = [];
     this.shipBounds = {};
     this.shipsSunk = 0;
     this.createBoard(size);
-    this.generateShips();
-    this.generateShipLocations(size);
-    console.log(this.board, this.shipBounds);
+    this.generateShips(size);
+    console.log(this.id, this.board);
   }
 
   createBoard(size) {
@@ -43,13 +47,11 @@ class Board {
   createDomBoard(size) {
     let board = document.createElement('table');
     board.setAttribute('id', this.id);
-    // board.setAttribute('class', 'board');
     for (let i = 0; i < size; i++) {
       let row = document.createElement('tr');
       board.appendChild(row);
       for (let j = 0; j < size; j++) {
         let cell = document.createElement('td');
-        cell.style.backgroundColor = 'lightblue';
         cell.setAttribute('data-x', i);
         cell.setAttribute('data-y', j);
         cell.setAttribute('data-board', this.id);
@@ -57,17 +59,17 @@ class Board {
       }
     }
     document.querySelector('#game').appendChild(board);
-    // this.addFireEventHandler(boardId);
   }
 
-  generateShips() {
+  generateShips(boardSize) {
     shipTypes.forEach(shipType => {
       this.ships.push(new Ship(shipType));
     });
+    this.generateShipLocations(boardSize);
   }
 
-  generateCoordinate(size) {
-    return Math.floor(Math.random() * size);
+  generateCoordinate(boardSize) {
+    return Math.floor(Math.random() * boardSize);
   }
 
   checkBounds(xCoord, yCoord, direction, shipSize, boardSize) {
@@ -82,7 +84,7 @@ class Board {
     } else if (direction === 'down') {
       if (xCoord + shipSize - 1 >= boardSize) return false;
       for (let i = 0; i < shipSize; i++) {
-        if (!this.shipBounds[xCoord]) { 
+        if (!this.shipBounds[xCoord]) {
           xCoord++;
           continue;
         }
@@ -101,15 +103,12 @@ class Board {
   generateShipLocations(boardSize) {
     // random x,y in bounds and direction (right or down)
     /*
-        this.shipBounds = {};
-
-      {
-        x: [all the y's]
-      }
+        this.shipBounds = {
+          x: [all the y's]
+        }
     */
 
     this.ships.forEach(ship => {
-      // // ship.id; ship.size
       // // cannot go out of bounds
       let check = null;
 
@@ -117,7 +116,13 @@ class Board {
         var direction = this.generateDirection();
         var xCoord = this.generateCoordinate(boardSize);
         var yCoord = this.generateCoordinate(boardSize);
-        check = this.checkBounds(xCoord, yCoord, direction, ship.size, boardSize);
+        check = this.checkBounds(
+          xCoord,
+          yCoord,
+          direction,
+          ship.size,
+          boardSize
+        );
       }
 
       for (let i = 0; i < ship.size; i++) {
