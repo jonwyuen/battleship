@@ -1,5 +1,15 @@
 const expect = chai.expect;
 
+describe('Game', () => {
+  const testGame = new Game();
+  describe('generates a game instance', () => {
+    it('returns an instance of a game as an object', () => {
+      expect(testGame).to.be.an('object');
+      expect(testGame).to.be.instanceOf(Game);
+    });
+  });
+});
+
 describe('Board', () => {
   let size = 10;
   let id = 1;
@@ -101,11 +111,16 @@ describe('Board', () => {
     });
   });
   describe('#addShipCoordinatesToBoard()', () => {
+    const testBoard1 = new Board(10, 1);
+    testBoard1.createBoard();
     it('sets ships property as an object with keys as each ship type and values as ship instance', () => {
-      testBoard.addShipCoordinatesToBoard(2, 3, 'right', 3, 'Submarine');
-      expect(testBoard.board[2][3], testBoard.board[2][4], testBoard.board[2][5]).to.equal('Submarine');
-      testBoard.addShipCoordinatesToBoard(4, 5, 'down', 2, 'Destroyer');
-      expect(testBoard.board[4][5], testBoard.board[5][5]).to.equal('Destroyer');
+      testBoard1.addShipCoordinatesToBoard(2, 3, 'right', 3, 'Submarine');
+      expect(testBoard1.board[2][3], testBoard1.board[2][4], testBoard1.board[2][5]).to.equal('Submarine');
+      testBoard1.addShipCoordinatesToBoard(4, 5, 'down', 2, 'Destroyer');
+      expect(testBoard1.board[4][5], testBoard1.board[5][5]).to.equal('Destroyer');
+    });
+    it('sets shipsBounds property as an object with keys as x coord and values as array of corresponding y coords', () => {
+      expect(testBoard1.shipBounds).to.deep.equal({ 2: [3, 4, 5], 4: [5], 5: [5] });
     });
   });
   describe('#generateValidShipLocation()', () => {
@@ -131,8 +146,8 @@ describe('Board', () => {
 describe('Ship', () => {
   const testShipType = 'Carrier';
   const testShip = new Ship(testShipType);
-  describe('generates a ship instance as an object', () => {
-    it('returns an instance of a ship', () => {
+  describe('generates a ship instance', () => {
+    it('returns an instance of a ship as an object', () => {
       expect(testShip).to.be.an('object');
       expect(testShip).to.be.instanceOf(Ship);
     });

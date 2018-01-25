@@ -17,13 +17,13 @@ Example Board
 
 */
 
-const shipTypes = [
+const shipTypes = new Set([
   'Carrier',
   'Battleship',
   'Cruiser',
   'Submarine',
   'Destroyer'
-];
+]);
 
 class Board {
   constructor(size, id) {
@@ -31,7 +31,8 @@ class Board {
     this.size = size;
     this.id = `board${id}`;
     this.ships = {};
-    // shipBounds keeps track of x and y coordinates that already taken by a ship
+    // shipBounds keeps track of x and y coordinates already taken by a ship
+    // keys are x coords and values are arrays of y coords 
     this.shipBounds = {};
     this.shipsSunk = 0;
     console.log(this.id, this.board);
@@ -84,6 +85,7 @@ class Board {
     let validShipLocation = null;
 
     while (!validShipLocation) {
+      // use var instead of let to save a few lines
       var x = this.generateCoordinate(this.size);
       var y = this.generateCoordinate(this.size);
       var direction = this.generateDirection();
@@ -110,6 +112,7 @@ class Board {
     }
   }
 
+  // makes sure ship is placed in board bounds and does not intersect with exisiting ships
   checkShipBounds(x, y, direction, shipSize, boardSize) {
     if (direction === 'right') {
       if (y + shipSize - 1 >= boardSize) return false;

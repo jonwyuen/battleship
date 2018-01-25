@@ -4,6 +4,7 @@ class Game {
     this.reset = this.reset.bind(this);
   }
 
+  // not run in constructor because reset runs init
   init() {
     this.boards = {};
     this.turn = Math.random() < 0.5 ? 'Player 1' : 'Player 2';
@@ -29,6 +30,19 @@ class Game {
     this.turn === 'Player 1'
       ? this.addEventHandler('#board2', 'click', this.fireEvent)
       : this.addEventHandler('#board1', 'click', this.fireEvent);
+  }
+
+  addBoardToGame(board) {
+    this.boards[board.id] = board;
+  }
+
+  reset(e) {
+    document.querySelector('.messages').classList.remove('hidden');
+    this.removeChildren('#game');
+    this.removeChildren('#player-labels');
+    e.target.innerText = 'Reset';
+    this.displayMessage('', 'game');
+    this.init();
   }
 
   switchTurns() {
@@ -103,19 +117,6 @@ class Game {
       );
       e.stopPropagation();
     }
-  }
-
-  reset(e) {
-    document.querySelector('.messages').classList.remove('hidden');
-    this.removeChildren('#game');
-    this.removeChildren('#player-labels');
-    e.target.innerText = 'Reset';
-    this.displayMessage('', 'game');
-    this.init();
-  }
-
-  addBoardToGame(board) {
-    this.boards[board.id] = board;
   }
 
   createPlayerLabels() {
