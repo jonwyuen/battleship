@@ -64,9 +64,9 @@ describe('Board', () => {
       expect(testBoard.ships).to.deep.equal(expectedShips);
     });
   });
-  describe('#generateShipLocations()', () => {
+  describe('#addShipsToBoard()', () => {
     it('sets each ship on the board property', () => {
-      testBoard.generateShipLocations();
+      testBoard.addShipsToBoard();
       let carrierCount = 0,
         battleshipCount = 0,
         cruiserCount = 0,
@@ -91,8 +91,8 @@ describe('Board', () => {
               destroyerCount++;
               break;
           }
-        })
-      })
+        });
+      });
       expect(carrierCount).to.equal(5);
       expect(battleshipCount).to.equal(4);
       expect(cruiserCount).to.equal(3);
@@ -104,6 +104,8 @@ describe('Board', () => {
     it('sets ships property as an object with keys as each ship type and values as ship instance', () => {
       testBoard.addShipCoordinatesToBoard(2, 3, 'right', 3, 'Submarine');
       expect(testBoard.board[2][3], testBoard.board[2][4], testBoard.board[2][5]).to.equal('Submarine');
+      testBoard.addShipCoordinatesToBoard(4, 5, 'down', 2, 'Destroyer');
+      expect(testBoard.board[4][5], testBoard.board[5][5]).to.equal('Destroyer');
     });
   });
   describe('#generateValidShipLocation()', () => {
