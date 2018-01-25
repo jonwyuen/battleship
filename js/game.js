@@ -24,7 +24,7 @@ class Game {
       currentBoard.createBoard();
       currentBoard.createDomBoard();
       currentBoard.generateShips();
-      currentBoard.generateShipLocations();
+      currentBoard.addShipsToBoard();
     }
     this.turn === 'Player 1'
       ? this.addEventHandler('#board2', 'click', this.fireEvent)

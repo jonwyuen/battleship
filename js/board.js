@@ -71,7 +71,7 @@ class Board {
     });
   }
 
-  generateShipLocations() {
+  addShipsToBoard() {
     for (let key in this.ships) {
       let ship = this.ships[key];
       let shipLocation = this.generateValidShipLocation(ship.size);
@@ -81,15 +81,12 @@ class Board {
   }
 
   generateValidShipLocation(shipSize) {
-    let validShipLocation = null,
-      x,
-      y,
-      direction;
+    let validShipLocation = null;
 
     while (!validShipLocation) {
-      x = this.generateCoordinate(this.size);
-      y = this.generateCoordinate(this.size);
-      direction = this.generateDirection();
+      var x = this.generateCoordinate(this.size);
+      var y = this.generateCoordinate(this.size);
+      var direction = this.generateDirection();
       validShipLocation = this.checkShipBounds(
         x,
         y,
