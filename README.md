@@ -6,10 +6,7 @@ My implementation of the classic game [Battleship](https://jonwyuen.github.io/ba
 
 ## How To Play
 
-<<<<<<< HEAD
-=======
 * Two players with the player starting randomly selected.
->>>>>>> master
 * Each player starts with five ships randomly placed onto their boards. 
 * The ships include
     * Carrier - 5 hits
@@ -18,10 +15,7 @@ My implementation of the classic game [Battleship](https://jonwyuen.github.io/ba
     * Submarine - 3 hits
     * Destroyer - 2 hits
 * Each player take turns firing at each other's board until a player sinks all of the other's ships.
-<<<<<<< HEAD
-=======
 * Each players board with ship locations and coordinates fired at can be found in the console.
->>>>>>> master
 
 ## Installing
 
@@ -45,10 +39,7 @@ My implementation of the classic game [Battleship](https://jonwyuen.github.io/ba
 * More customization of ships
   * Ability to choose number of ships
   * Option for players to place ships on their board
-<<<<<<< HEAD
-=======
   * Graphical indication of ships
->>>>>>> master
 * Testing of DOM elements
 
 Thanks for checking out my implementation of Battleship. Feel free to email me at <jonwyuen@gmail.com> with any questions.
