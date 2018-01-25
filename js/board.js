@@ -2,20 +2,21 @@
 Example Board
 
 [ 
-  [null, s2, s2, null, null, null, null, null, null, null], 
-  [null, s4, null, null, null, null, null, null, null, null], 
-  [null, s4, null, null, null, null, null, null, null, null], 
-  [null, s4, null, null, null, null, null, null, null, null], 
-  [null, s4, null, null, null, null, null, null, null, null], 
-  [null, null, null, null, s5, s5, s5, s5, s5, null], 
+  [null, Destroyer, Destroyer, null, null, null, null, null, null, null], 
+  [null, Battleship, null, null, null, null, null, null, null, null], 
+  [null, Battleship, null, null, null, null, null, null, null, null], 
+  [null, Battleship, null, null, null, null, null, null, null, null], 
+  [null, Battleship, null, null, null, null, null, null, null, null], 
+  [null, Battleship, null, null, Cruiser, Cruiser, Cruiser, null, null, null], 
   [null, null, null, null, null, null, null, null, null, null], 
   [null, null, null, null, null, null, null, null, null, null], 
-  [null, null, null, s3, null, null, null, null, null, null], 
-  [null, null, null, s3, null, null, null, null, null, null], 
-  [null, null, null, s3, null, null, null, null, null, null] 
+  [null, null, null, Submarine, null, null, null, null, null, null], 
+  [null, null, null, Submarine, null, null, null, null, null, null], 
+  [null, null, null, Submarine, null, Carrier, Carrier, Carrier, Carrier, Carrier] 
 ]
 
 */
+
 const shipTypes = [
   'Carrier',
   'Battleship',
@@ -27,30 +28,29 @@ const shipTypes = [
 class Board {
   constructor(size, id) {
     this.board = [];
+    this.size = size;
     this.id = `board${id}`;
-    this.ships = [];
+    this.ships = {};
+    // shipBounds keeps track of x and y coordinates that already taken by a ship
     this.shipBounds = {};
     this.shipsSunk = 0;
-    this.createBoard(size);
-    this.generateShips(size);
     console.log(this.id, this.board);
   }
 
-  createBoard(size) {
-    for (let i = 0; i < size; i++) {
-      let subArray = new Array(size).fill(null);
+  createBoard() {
+    for (let i = 0; i < this.size; i++) {
+      let subArray = new Array(this.size).fill(null);
       this.board.push(subArray);
     }
-    this.createDomBoard(size);
   }
 
-  createDomBoard(size) {
+  createDomBoard() {
     let board = document.createElement('table');
     board.setAttribute('id', this.id);
-    for (let i = 0; i < size; i++) {
+    for (let i = 0; i < this.size; i++) {
       let row = document.createElement('tr');
       board.appendChild(row);
-      for (let j = 0; j < size; j++) {
+      for (let j = 0; j < this.size; j++) {
         let cell = document.createElement('td');
         cell.setAttribute('data-x', i);
         cell.setAttribute('data-y', j);
@@ -61,34 +61,75 @@ class Board {
     document.querySelector('#game').appendChild(board);
   }
 
-  generateShips(boardSize) {
+  generateShip(shipType) {
+    this.ships[shipType] = new Ship(shipType);
+  }
+
+  generateShips() {
     shipTypes.forEach(shipType => {
-      this.ships.push(new Ship(shipType));
+      this.generateShip(shipType);
     });
-    this.generateShipLocations(boardSize);
   }
 
-  generateCoordinate(boardSize) {
-    return Math.floor(Math.random() * boardSize);
+  generateShipLocations() {
+    for (let key in this.ships) {
+      let ship = this.ships[key];
+      let shipLocation = this.generateValidShipLocation(ship.size);
+      let [x, y, direction] = shipLocation;
+      this.addShipCoordinatesToBoard(x, y, direction, ship.size, ship.type);
+    }
   }
 
-  checkBounds(xCoord, yCoord, direction, shipSize, boardSize) {
+  generateValidShipLocation(shipSize) {
+    let validShipLocation = null,
+      x,
+      y,
+      direction;
+
+    while (!validShipLocation) {
+      x = this.generateCoordinate(this.size);
+      y = this.generateCoordinate(this.size);
+      direction = this.generateDirection();
+      validShipLocation = this.checkShipBounds(
+        x,
+        y,
+        direction,
+        shipSize,
+        this.size
+      );
+    }
+    return [x, y, direction];
+  }
+
+  addShipCoordinatesToBoard(x, y, direction, shipSize, shipType) {
+    for (let i = 0; i < shipSize; i++) {
+      if (!this.shipBounds[x]) this.shipBounds[x] = [];
+      this.shipBounds[x].push(y);
+      if (direction === 'right') {
+        this.board[x][y++] = shipType;
+      } else if (direction === 'down') {
+        this.board[x++][y] = shipType;
+      }
+    }
+  }
+
+  checkShipBounds(x, y, direction, shipSize, boardSize) {
     if (direction === 'right') {
-      if (yCoord + shipSize - 1 >= boardSize) return false;
-      if (!this.shipBounds[xCoord]) return true;
+      if (y + shipSize - 1 >= boardSize) return false;
+      if (!this.shipBounds[x]) return true;
       for (let i = 0; i < shipSize; i++) {
-        if (this.shipBounds[xCoord].includes(yCoord++)) {
+        if (this.shipBounds[x].includes(y++)) {
           return false;
         }
       }
     } else if (direction === 'down') {
-      if (xCoord + shipSize - 1 >= boardSize) return false;
+      if (x + shipSize - 1 >= boardSize) return false;
       for (let i = 0; i < shipSize; i++) {
-        if (!this.shipBounds[xCoord]) {
-          xCoord++;
+        if (!this.shipBounds[x]) {
+          x++;
           continue;
         }
-        if (this.shipBounds[xCoord++].includes(yCoord)) {
+        if (this.shipBounds[x++].includes(y)) {
           return false;
         }
       }
@@ -100,40 +141,7 @@ class Board {
     return Math.random() < 0.5 ? 'right' : 'down';
   }
 
-  generateShipLocations(boardSize) {
-    // random x,y in bounds and direction (right or down)
-    /*
-        this.shipBounds = {
-          x: [all the y's]
-        }
-    */
-
-    this.ships.forEach(ship => {
-      // // cannot go out of bounds
-      let check = null;
-
-      while (!check) {
-        var direction = this.generateDirection();
-        var xCoord = this.generateCoordinate(boardSize);
-        var yCoord = this.generateCoordinate(boardSize);
-        check = this.checkBounds(
-          xCoord,
-          yCoord,
-          direction,
-          ship.size,
-          boardSize
-        );
-      }
-
-      for (let i = 0; i < ship.size; i++) {
-        if (!this.shipBounds[xCoord]) this.shipBounds[xCoord] = [];
-        this.shipBounds[xCoord].push(yCoord);
-        if (direction === 'right') {
-          this.board[xCoord][yCoord++] = ship.type;
-        } else if (direction === 'down') {
-          this.board[xCoord++][yCoord] = ship.type;
-        }
-      }
-    });
+  generateCoordinate(boardSize) {
+    return Math.floor(Math.random() * boardSize);
   }
 }

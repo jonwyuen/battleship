@@ -8,6 +8,7 @@ class Ship {
   constructor(type) {
     this.type = type
     this.size = null;
+    this.hits = 0;
     this.generateShipSize(type);
   }
 

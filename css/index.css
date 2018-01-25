@@ -51,7 +51,7 @@ button#reset:hover {
   border: 1px solid black;
   border-radius: 10px;
   background-color: lightblue;
-  margin: 20px auto;
+  margin: 25px auto;
   width: 300px;
   text-align: left;
 }
@@ -88,4 +88,12 @@ button#reset:hover {
 
 .hidden {
   display: none;
+}
+
+td.hit {
+  background-color: #CC0000;
+}
+
+td.miss {
+  background-color: white;
 }
