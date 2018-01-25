@@ -102,10 +102,14 @@ describe('Board', () => {
   });
   describe('#addShipCoordinatesToBoard()', () => {
     it('sets ships property as an object with keys as each ship type and values as ship instance', () => {
-      testBoard.addShipCoordinatesToBoard(2, 3, 'right', 3, 'Submarine');
-      expect(testBoard.board[2][3], testBoard.board[2][4], testBoard.board[2][5]).to.equal('Submarine');
-      testBoard.addShipCoordinatesToBoard(4, 5, 'down', 2, 'Destroyer');
-      expect(testBoard.board[4][5], testBoard.board[5][5]).to.equal('Destroyer');
+      const testBoard1 = new Board(10, 1)
+      testBoard1.createBoard();
+      testBoard1.addShipCoordinatesToBoard(2, 3, 'right', 3, 'Submarine');
+      expect(testBoard1.board[2][3], testBoard1.board[2][4], testBoard1.board[2][5]).to.equal('Submarine');
+      expect(testBoard1.shipBounds).to.deep.equal({ 2: [3, 4, 5] });
+      testBoard1.addShipCoordinatesToBoard(4, 5, 'down', 2, 'Destroyer');
+      expect(testBoard1.board[4][5], testBoard1.board[5][5]).to.equal('Destroyer');
+      expect(testBoard1.shipBounds).to.deep.equal({2: [3, 4, 5], 4: [5], 5: [5]});
     });
   });
   describe('#generateValidShipLocation()', () => {
