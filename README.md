@@ -40,6 +40,7 @@ My implementation of the classic game [Battleship](https://jonwyuen.github.io/ba
   * Ability to choose number of ships
   * Option for players to place ships on their board
   * Graphical indication of ships
+* Only a single player's board shows at a time
 * Testing of DOM elements
 
 Thanks for checking out my implementation of Battleship. Feel free to email me at <jonwyuen@gmail.com> with any questions.

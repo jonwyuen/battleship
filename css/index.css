@@ -22,11 +22,11 @@ td {
 
 #game {
   display: flex;
+  justify-content: space-between;
 }
 
-#player-labels {
-  display: flex;
-  justify-content: space-around;
+table > caption {
+  margin-bottom: 20px;
 }
 
 button#reset {
@@ -96,4 +96,10 @@ td.hit {
 
 td.miss {
   background-color: white;
+}
+
+@media screen and (max-width: 900px) {
+  #game {
+    flex-direction: column;
+  }
 }
