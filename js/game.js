@@ -9,7 +9,6 @@ class Game {
     this.boards = {};
     this.turn = Math.random() < 0.5 ? 'Player 1' : 'Player 2';
     this.gameOver = false;
-    this.createPlayerLabels();
     this.initBoards();
     this.displayMessage(`${this.turn}'s Turn`, 'turn');
   }
@@ -39,7 +38,6 @@ class Game {
   reset(e) {
     document.querySelector('.messages').classList.remove('hidden');
     this.removeChildren('#game');
-    this.removeChildren('#player-labels');
     e.target.innerText = 'Reset';
     this.displayMessage('', 'game');
     this.init();
@@ -116,15 +114,6 @@ class Game {
         e.target
       );
       e.stopPropagation();
-    }
-  }
-
-  createPlayerLabels() {
-    let playerLabels = document.querySelector('#player-labels');
-    for (let i = 1; i < 3; i++) {
-      let playerLabel = document.createElement('span');
-      playerLabel.innerText = `Player ${i}`;
-      playerLabels.appendChild(playerLabel);
     }
   }
 

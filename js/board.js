@@ -32,7 +32,7 @@ class Board {
     this.id = `board${id}`;
     this.ships = {};
     // shipBounds keeps track of x and y coordinates already taken by a ship
-    // keys are x coords and values are arrays of y coords 
+    // keys are x coords and values are arrays of y coords
     this.shipBounds = {};
     this.shipsSunk = 0;
     console.log(this.id, this.board);
@@ -46,8 +46,12 @@ class Board {
   }
 
   createDomBoard() {
+    let gameDiv = document.querySelector('#game');
     let board = document.createElement('table');
     board.setAttribute('id', this.id);
+    let playerId = this.id.charAt(this.id.length - 1);
+    let playerLabel = this.createPlayerLabel(playerId);
+    board.appendChild(playerLabel);
     for (let i = 0; i < this.size; i++) {
       let row = document.createElement('tr');
       board.appendChild(row);
@@ -59,7 +63,14 @@ class Board {
         row.appendChild(cell);
       }
     }
-    document.querySelector('#game').appendChild(board);
+  
+    gameDiv.appendChild(board);
+  }
+
+  createPlayerLabel(id) {
+    let playerLabel = document.createElement('caption');
+    playerLabel.innerText = `Player ${id}`;
+    return playerLabel;
   }
 
   generateShip(shipType) {
